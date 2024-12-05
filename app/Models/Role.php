@@ -2,28 +2,26 @@
 
 namespace App\Models;
 
-use App\Models\Role;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Company extends Model
+class Role extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'name',
-        'email',
     ];
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'users_companies');
+        return $this->BelongsToMany(User::class, 'company_user_role');
     }
 
-    public function roles(): BelongsToMany
+    public function companies(): BelongsToMany
     {
-        return $this->belongsToMany(Role::class, 'user_company_roles');
+        return $this->belongsToMany(Company::class, 'company_user_role');
     }
 }
