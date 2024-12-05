@@ -19,18 +19,22 @@ class InviteController extends Controller
 {
     public function inviteCompany(InviteCompanyRequest $request): JsonResponse
     {
+        $email = $request->validated('email');
+
         $user = User::create([
-            'email' => $request->email,
+            'email' => $email,
         ]);
 
         $inviteToken = JWTAuth::fromUser($user);
 
         $invite = Invitation::create([
-            'email' => $request->email,
+            'email' => $email,
             'token' => $inviteToken,
         ]);
 
-        $company = Company::create(['name' => $request->name,]);
+        $company = Company::create([
+            'name' => $request->validated('name')
+        ]);
         $company->users()->attach($user->id);
 
         $role = Role::firstWhere('name', 'company owner');
@@ -44,8 +48,10 @@ class InviteController extends Controller
 
     public function inviteUser(InviteUserRequest $request): JsonResponse
     {
-        $user = User::firstOrCreate(['email' => $request->email]);
-        $company = Company::firstWhere('name', $request->company);
+        $email = $request->validated('email');
+
+        $user = User::firstOrCreate(['email' => $email]);
+        $company = Company::firstWhere('name', $request->validated('company'));
 
         $user->companies()->attach($company);
 
@@ -56,7 +62,7 @@ class InviteController extends Controller
         $inviteToken = JWTAuth::fromUser($user);
 
         Invitation::create([
-            'email' => $request->email,
+            'email' => $email,
             'token' => $inviteToken,
         ]);
 
@@ -64,24 +70,5 @@ class InviteController extends Controller
             'status' => 200,
             'token' => $inviteToken
         ]);
-    }
-
-    public function activateUser(UserActivateRequest $request): JsonResponse
-    {
-        $user = User::firstWhere('email', $request->email);
-        $findToken = Invitation::firstWhere('token', $request->token);
-
-        if (empty($user) || empty($findToken)) {
-
-            return response()->json(['status' => 500]);
-        }
-
-        $user->update([
-            'name' => $request->name,
-            'surname' => $request->surname,
-            'password' => Hash::make($request->password)
-        ]);
-
-        return response()->json(['status' => 200]);
     }
 }

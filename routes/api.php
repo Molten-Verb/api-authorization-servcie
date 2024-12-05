@@ -28,4 +28,8 @@ Route::post('/user', 'inviteUser');
 Route::post('/activate', 'activateUser');
 });
 
-Route::post('/login', [AuthController::class, 'login']);
+Route::controller(AuthController::class)
+    ->group (function () {
+Route::post('/login', 'login');
+Route::post('/activate', 'activateUser');
+});
