@@ -5,11 +5,11 @@ namespace App\Models;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Company;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class UserCompanyRole extends Model
+class UserCompanyRole extends Pivot
 {
     use HasFactory;
 
