@@ -3,7 +3,10 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
+use App\Models\Company;
 use Illuminate\Database\Seeder;
+use App\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -12,11 +15,21 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        $adminServiceRole = Role::create(['name' => 'service admin']);
+        $companyOwnerRole = Role::create(['name' => 'company owner']);
+        $adminCompanyRole = Role::create(['name' => 'company admin']);
+        $userRole = Role::create(['name' => 'company user']);
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        $company = Company::create(['name' => 'А-Кор', 'email' => 'a-kor@mail.com']);
+
+        $admin = User::create([
+            'name' => 'Иван',
+            'surname' => 'Иванов',
+            'email' => 'admin@admin.com',
+            'password' => 'admin'
+        ]);
+
+        $company->users()->attach($admin->id);
+        $admin->roles()->attach($adminServiceRole->id, ['company_id' => $company->id]);
     }
 }
